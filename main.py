@@ -14,18 +14,18 @@ if __name__ == '__main__':
                             source_tokenizer=source_tokenizer, target_tokenizer=target_tokenizer,
                             head=8, dropout=None)
 
-    # a_batch = next(iter(train_data_loader))
+    a_batch = next(iter(train_data_loader))
 
     total_loss = 0
     init = 0
     epochs = 100
     for epoch in range(init, epochs):
-        # batch_iterator = tqdm(a_batch, desc=f"Processing Epoch {epoch:02d}")
-        batch_iterator = tqdm(train_data_loader, desc=f"Processing Epoch {epoch:04d}")
-        for a_batch in batch_iterator:
-            loss = experiment.train(a_batch)
-            total_loss += loss
-            batch_iterator.set_postfix({"loss": f"{loss:6.3f}"})
+        batch_iterator = tqdm(a_batch, desc=f"Processing Epoch {epoch:02d}")
+        # batch_iterator = tqdm(train_data_loader, desc=f"Processing Epoch {epoch:04d}")
+        # for a_batch in batch_iterator:
+        loss = experiment.train(a_batch)
+        total_loss += loss
+        batch_iterator.set_postfix({"loss": f"{loss:6.3f}"})
 
         total_loss /= len(train_data_loader)
 
