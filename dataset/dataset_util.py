@@ -28,7 +28,7 @@ def get_all_sentence_form_dataset(ds, lang):
         yield item['translation'][lang]
 
 
-def get_train_val_datasets(lang_source='en', lang_target='it', batch_size=16):
+def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, workers):
     ds_raw = load_dataset('opus_books', f'{lang_source}-{lang_target}', split='train')
     tokenizer_source = get_build_tokenizer(ds_raw, lang_source)
     tokenizer_target = get_build_tokenizer(ds_raw, lang_target)
@@ -39,13 +39,12 @@ def get_train_val_datasets(lang_source='en', lang_target='it', batch_size=16):
     train_split_size = int(0.9 * len(ds_raw))
     val_split_size = len(ds_raw) - train_split_size
 
-    # TODO add src and target language and seq_len in the config
     train_ds, val_ds = random_split(ds_raw, [train_split_size, val_split_size])
 
-    train_dataset = BilingualDataset(train_ds, tokenizer_source, tokenizer_target, 'en', 'it', seq_len=512)
-    val_dataset = BilingualDataset(val_ds, tokenizer_source, tokenizer_target, 'en', 'it', seq_len=512)
+    train_dataset = BilingualDataset(train_ds, tokenizer_source, tokenizer_target, 'en', 'it', seq_len=max_len)
+    val_dataset = BilingualDataset(val_ds, tokenizer_source, tokenizer_target, 'en', 'it', seq_len=max_len)
 
-    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=workers)
+    val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=workers)
 
     return train_dataloader, val_dataloader, source_vocab_size, target_vocab_size, tokenizer_source, tokenizer_target
