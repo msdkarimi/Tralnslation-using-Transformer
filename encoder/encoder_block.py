@@ -7,13 +7,14 @@ class Encoder(nn.Module):
 
         self.N = N
         self.pe = PositionalEmbedding(dictionary_size=encoder_input_vocab_size, embedding_size=embedding_size)
-        self.encoder_blocks = [
+        self.encoder_blocks = nn.ModuleList([
             EncoderBlock(embedding_size=embedding_size, ff_hidden_layer=ff_hidden_layer, head=head, dropout=dropout)
             for _ in range(self.N)
-            ]
+            ])
 
     def forward(self, x, mask):
         x = self.pe(x)
+        # x = self.encoder_blocks(x, mask)
         for an_encoder in self.encoder_blocks:
             x = an_encoder(x, mask)
         return x

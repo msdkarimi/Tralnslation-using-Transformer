@@ -14,7 +14,9 @@ class Transformer(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, encoder_input, decoder_input, mask_encoder, mask_decoder):
+
         encoder_output = self.encoder(encoder_input, mask_encoder)
         decoder_output = self.decoder(decoder_input, encoder_output, mask_decoder)
         logits = self.linear(decoder_output)  # torch.Size([16, 512, 22463]) (B, seq_len, vocab_size)
         return logits
+

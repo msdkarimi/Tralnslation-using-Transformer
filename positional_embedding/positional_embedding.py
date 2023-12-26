@@ -13,6 +13,10 @@ class PositionalEmbedding(nn.Module):
         self.base = base
         self.max_len = max_len
 
+        self.freq = self.frequency()
+        # buffers are saved in state_dict but not trained by the optimizer
+        self.register_buffer('positional_embedding', self.freq)
+
     def forward(self, input_token: str):
 
         # token_seq = input_token
@@ -23,10 +27,8 @@ class PositionalEmbedding(nn.Module):
         # print(embedding.shape)
         # print(embedding)
         # exit()
-        freq = self.frequency()
-        pe = embedding + freq[:, : embedding.shape[1], :].requires_grad_(False)
-
-        return self.dropout(pe) if self.dropout is not None else pe
+        input_token_pe = embedding + self.freq[:, : embedding.shape[1], :].requires_grad_(False)
+        return self.dropout(input_token_pe) if self.dropout is not None else input_token_pe
 
     def frequency(self):
         frequency = torch.zeros(self.max_len, self.embedding_size)
@@ -36,10 +38,6 @@ class PositionalEmbedding(nn.Module):
         frequency[:, 0::2] = torch.sin(positions * div_term)
         frequency[:, 1::2] = torch.cos(positions * div_term)
         frequency = frequency.unsqueeze(0)
-
-        # buffers are saved in state_dict but not trained by the optimizer
-        self.register_buffer("pe", frequency)
-
         return frequency
 
     def visualize_pe(self):

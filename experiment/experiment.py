@@ -1,7 +1,8 @@
 from transformer.transformer_model import Transformer
 import torch
 import torch.nn as nn
-from configs.args import args
+from configs.args import args, logger
+import os
 
 
 class Experiment:
@@ -21,10 +22,14 @@ class Experiment:
 
 
 
-        #TODO just for initialization  not after loading
+        # TODO just for initialization  not after loading
         for p in self.model.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
+
+        # print(self.model)
+        # exit()
+
 
     def train(self, a_batch):
         self.model.train()
@@ -46,7 +51,32 @@ class Experiment:
 
         return loss.item()
 
-    def validation(self, validation_dataloader):
+    def save_checkpoint(self, checkpoint_path, loss, epoch):
+        torch.save({
+            'model': self.model.state_dict(),
+            'optimizer': self.optimizer.state_dict(),
+            'loss': loss,
+            'epoch': epoch
+        }, checkpoint_path)
+
+    def load_checkpoint(self, checkpoint_path):
+        if os.path.exists(checkpoint_path):
+            logger.info('-----------------Loading checkpoint!')
+            checkpoint = torch.load(checkpoint_path)
+
+            for key, value in checkpoint['model'].items():
+                print(key)
+            exit(0)
+            #
+            self.model.load_state_dict(checkpoint['model'])
+            self.optimizer.load_state_dict(checkpoint['optimizer'])
+
+            return checkpoint['loss'], checkpoint['epoch']
+
+        else:
+            raise FileExistsError(f'file {checkpoint_path} does not exists!')
+
+    def validation(self, validation_dataloader,):
         self.model.eval()
         with self.model.no_grad():
             pass

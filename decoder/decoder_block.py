@@ -7,10 +7,10 @@ class Decoder(nn.Module):
 
         self.N = N
         self.pe = PositionalEmbedding(dictionary_size=decoder_input_vocab_size, embedding_size=embedding_size)
-        self.decoder_blocks = [
+        self.decoder_blocks = nn.ModuleList([
             DecoderBlock(embedding_size=embedding_size, ff_hidden_layer=ff_hidden_layer, head=head, dropout=dropout)
             for _ in range(self.N)
-            ]
+            ])
 
     def forward(self, decoder_input, encoder_output, mask):
         decoder_input = self.pe(decoder_input)

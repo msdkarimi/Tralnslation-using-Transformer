@@ -15,6 +15,7 @@ parser.add_argument('--config', help="location of config file", default=os.path.
 parser.add_argument('--stepSize', type=int, default=20, help='scheduler step size to reduce learning rate')
 parser.add_argument('--cpu', action='store_true', help='If set, the experiment will run on the CPU.')
 parser.add_argument("--output", help="location of outputDir, logs or weights", default=os.path.join(os.getcwd(),'outputDir'))
+parser.add_argument("--checkpoint_file", help="location of outputDir, logs or weights", default=os.path.join(os.getcwd(), 'outputDir', 'weights', 'best_checkpoint.pth'))
 
 args = parser.parse_args()
 
