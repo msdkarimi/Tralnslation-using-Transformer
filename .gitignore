@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-outputDir/weights/best_checkpoint.pth
+outputDir/*
 
 # C extensions
 *.so
