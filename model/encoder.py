@@ -2,13 +2,19 @@ from model import *
 
 
 class Encoder(nn.Module):
-    def __init__(self, encoder_input_vocab_size: int, embedding_size: int, ff_hidden_layer: int, head: int, dropout: float = None, N=6):
+    def __init__(self, encoder_input_vocab_size: int, embedding_size: int, max_seq_len: int, ff_hidden_layer: int, head: int, dropout: float = None, N=6):
         super(Encoder, self).__init__()
 
         self.N = N
-        self.pe = PositionalEmbedding(dictionary_size=encoder_input_vocab_size, embedding_size=embedding_size)
+        self.pe = PositionalEmbedding(dictionary_size=encoder_input_vocab_size,
+                                      embedding_size=embedding_size,
+                                      max_len=max_seq_len)
+
         self.encoder_blocks = nn.ModuleList([
-            EncoderBlock(embedding_size=embedding_size, ff_hidden_layer=ff_hidden_layer, head=head, dropout=dropout)
+            EncoderBlock(embedding_size=embedding_size,
+                         ff_hidden_layer=ff_hidden_layer,
+                         head=head,
+                         dropout=dropout)
             for _ in range(self.N)
             ])
 

@@ -19,6 +19,7 @@ def main(config):
     experiment = Experiment(source_vocab_size,
                             target_vocab_size,
                             embedding_size=config['MODEL']['EMB_DIM'],
+                            max_seq_len=config['MODEL']['MAX_SEQ_LEN'],
                             ff_hidden_layer=config['MODEL']['FF_HIDDEN_LAYER'],
                             lr=config['MODEL']['LR'],
                             weight_decay=float(config['MODEL']['WEIGHT_DECAY']),

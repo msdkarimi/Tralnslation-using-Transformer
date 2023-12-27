@@ -1,9 +1,10 @@
 from model import *
 import matplotlib.pyplot as plt
 
+
 class PositionalEmbedding(nn.Module):
     # TODO( define max_len in config)
-    def __init__(self, dictionary_size: int, embedding_size: int, dropout=None, max_len=512, base=1e4):
+    def __init__(self, dictionary_size: int, embedding_size: int, max_len: int, dropout=None, base=1e4):
         super(PositionalEmbedding, self).__init__()
         self.embedding_size = embedding_size
         self.embedding = Embedding(dictionary_size=dictionary_size, embedding_size=embedding_size)
@@ -40,8 +41,8 @@ class PositionalEmbedding(nn.Module):
 
     def visualize_pe(self):
         plt.imshow(self.frequency().squeeze(0), aspect="auto")
-        plt.title("Positional Encoding")
-        plt.xlabel("Encoding Dimension")
+        plt.title("Positional Embedding")
+        plt.xlabel("Embedding Dimension")
         plt.ylabel("Position Index")
 
         # set the tick marks for the axes
@@ -51,7 +52,8 @@ class PositionalEmbedding(nn.Module):
             plt.yticks(torch.arange(self.max_len - 1, -1, -1))
 
         plt.colorbar()
-        plt.show()
+        plt.savefig('positional embedding.png')
+        # plt.show()
 
 
 class Embedding(nn.Module):
