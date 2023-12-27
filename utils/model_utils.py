@@ -1,9 +1,10 @@
 import torch
 import os
 from configs.args import logger
+import torch.nn as nn
 
 
-class Model_Util:
+class ModelUtil:
 
     def __init__(self,):
         pass
@@ -26,4 +27,10 @@ class Model_Util:
             return checkpoint['loss'], checkpoint['epoch']
 
         else:
+            # for p in self.model.parameters():
+            #     if p.dim() > 1:
+            #         nn.init.xavier_uniform_(p)
+            #
+            # return 0, 0
+
             raise FileExistsError(f'file {checkpoint_path} does not exists!')

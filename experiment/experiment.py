@@ -1,12 +1,12 @@
-from transformer.transformer_model import Transformer
+from model.transformer_model import Transformer
 import torch
 import torch.nn as nn
 from configs.args import args, logger
-from utils.model_utils import Model_Util
+from utils.model_utils import ModelUtil
 import os
 
 
-class Experiment(Model_Util):
+class Experiment(ModelUtil):
     def __init__(self, encoder_input_vocab_size: int, decoder_input_vocab_size: int, embedding_size, ff_hidden_layer, lr, l_s, source_tokenizer, target_tokenizer=None, head=6, dropout=None, N=6,):
         self.model = Transformer(encoder_input_vocab_size=encoder_input_vocab_size, decoder_input_vocab_size=decoder_input_vocab_size, embedding_size=embedding_size,
                                  ff_hidden_layer=ff_hidden_layer, head=head, dropout=dropout, N=N)
@@ -21,12 +21,6 @@ class Experiment(Model_Util):
         for param in self.model.parameters():
             param.requires_grad = True
 
-
-
-        # # TODO just for initialization  not after loading
-        for p in self.model.parameters():
-            if p.dim() > 1:
-                nn.init.xavier_uniform_(p)
 
         # print(self.model)
         # exit()
