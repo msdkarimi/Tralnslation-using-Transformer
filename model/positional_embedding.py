@@ -1,7 +1,5 @@
-import torch
-
-from positional_embedding import *
-
+from model import *
+import matplotlib.pyplot as plt
 
 class PositionalEmbedding(nn.Module):
     # TODO( define max_len in config)

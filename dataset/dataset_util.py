@@ -12,7 +12,7 @@ from pathlib import Path
 
 def get_build_tokenizer(ds, lang):
 
-    tokenizer_path = Path('tokenizer/for_lang_{}'.format(lang))
+    tokenizer_path = Path('dictionaries/for_lang_{}'.format(lang))
     if not Path.exists(tokenizer_path):
         tokenizer = Tokenizer(WordLevel(unk_token='[UNK]'))
         tokenizer.pre_tokenizer = Whitespace()

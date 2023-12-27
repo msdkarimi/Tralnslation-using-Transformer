@@ -31,9 +31,9 @@ if args.output != os.path.join(os.getcwd(), "outputDir"):
     else:
         args.output = os.path.join(os.getcwd(), args.output)
 
-if not Path('tokenizer').exists():
+if not Path('dictionaries').exists():
     # If it doesn't exist, create the directory
-    Path('tokenizer').mkdir()
+    Path('dictionaries').mkdir()
 #
 if not args.cpu:
     assert torch.cuda.is_available(), 'You need a CUDA capable device in order to run this experiment. See `--cpu` flag.'
