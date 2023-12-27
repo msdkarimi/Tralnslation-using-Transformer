@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 outputDir
 outputDir/*
+.gitignore
 
 # C extensions
 *.so
