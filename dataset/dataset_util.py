@@ -31,7 +31,7 @@ def get_all_sentence_form_dataset(ds, lang):
 
 
 def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, workers):
-    torch.manual_seed(2809)
+    torch.manual_seed(1371)
     ds_raw = load_dataset('opus_books', f'{lang_source}-{lang_target}', split='train')
     tokenizer_source = get_build_tokenizer(ds_raw, lang_source)
     tokenizer_target = get_build_tokenizer(ds_raw, lang_target)

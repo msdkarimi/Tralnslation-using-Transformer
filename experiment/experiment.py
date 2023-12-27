@@ -2,10 +2,11 @@ from transformer.transformer_model import Transformer
 import torch
 import torch.nn as nn
 from configs.args import args, logger
+from utils.model_utils import Model_Util
 import os
 
 
-class Experiment:
+class Experiment(Model_Util):
     def __init__(self, encoder_input_vocab_size: int, decoder_input_vocab_size: int, embedding_size, ff_hidden_layer, lr, l_s, source_tokenizer, target_tokenizer=None, head=6, dropout=None, N=6,):
         self.model = Transformer(encoder_input_vocab_size=encoder_input_vocab_size, decoder_input_vocab_size=decoder_input_vocab_size, embedding_size=embedding_size,
                                  ff_hidden_layer=ff_hidden_layer, head=head, dropout=dropout, N=N)
@@ -51,30 +52,30 @@ class Experiment:
 
         return loss.item()
 
-    def save_checkpoint(self, checkpoint_path, loss, epoch):
-        torch.save({
-            'model': self.model.state_dict(),
-            'optimizer': self.optimizer.state_dict(),
-            'loss': loss,
-            'epoch': epoch
-        }, checkpoint_path)
+    # def save_checkpoint(self, checkpoint_path, loss, epoch):
+    #     torch.save({
+    #         'model': self.model.state_dict(),
+    #         'optimizer': self.optimizer.state_dict(),
+    #         'loss': loss,
+    #         'epoch': epoch
+    #     }, checkpoint_path)
 
-    def load_checkpoint(self, checkpoint_path):
-        if os.path.exists(checkpoint_path):
-            logger.info('-----------------Loading checkpoint!')
-            checkpoint = torch.load(checkpoint_path)
-
-            # for key, value in checkpoint['model'].items():
-            #     print(key)
-            # exit(0)
-            #
-            self.model.load_state_dict(checkpoint['model'])
-            self.optimizer.load_state_dict(checkpoint['optimizer'])
-
-            return checkpoint['loss'], checkpoint['epoch']
-
-        else:
-            raise FileExistsError(f'file {checkpoint_path} does not exists!')
+    # def load_checkpoint(self, checkpoint_path):
+    #     if os.path.exists(checkpoint_path):
+    #         logger.info('-----------------Loading checkpoint!')
+    #         checkpoint = torch.load(checkpoint_path)
+    #
+    #         # for key, value in checkpoint['model'].items():
+    #         #     print(key)
+    #         # exit(0)
+    #         #
+    #         self.model.load_state_dict(checkpoint['model'])
+    #         self.optimizer.load_state_dict(checkpoint['optimizer'])
+    #
+    #         return checkpoint['loss'], checkpoint['epoch']
+    #
+    #     else:
+    #         raise FileExistsError(f'file {checkpoint_path} does not exists!')
 
     def validation(self, validation_dataloader,):
         self.model.eval()
