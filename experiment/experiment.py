@@ -46,31 +46,6 @@ class Experiment(ModelUtil):
 
         return loss.item()
 
-    # def save_checkpoint(self, checkpoint_path, loss, epoch):
-    #     torch.save({
-    #         'model': self.model.state_dict(),
-    #         'optimizer': self.optimizer.state_dict(),
-    #         'loss': loss,
-    #         'epoch': epoch
-    #     }, checkpoint_path)
-
-    # def load_checkpoint(self, checkpoint_path):
-    #     if os.path.exists(checkpoint_path):
-    #         logger.info('-----------------Loading checkpoint!')
-    #         checkpoint = torch.load(checkpoint_path)
-    #
-    #         # for key, value in checkpoint['model'].items():
-    #         #     print(key)
-    #         # exit(0)
-    #         #
-    #         self.model.load_state_dict(checkpoint['model'])
-    #         self.optimizer.load_state_dict(checkpoint['optimizer'])
-    #
-    #         return checkpoint['loss'], checkpoint['epoch']
-    #
-    #     else:
-    #         raise FileExistsError(f'file {checkpoint_path} does not exists!')
-
     def validation(self, validation_dataloader,):
         self.model.eval()
         with self.model.no_grad():

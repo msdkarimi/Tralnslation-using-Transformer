@@ -7,5 +7,7 @@ Educational repository, implementing encoder/decoder transformer model to perfor
 - Model itself is composed of [an encoder](decoder) and [a decoder](encoder). Based on the paper, each-one is consists of a few modules which mainly are [multi-head attention](utils/blocks_util.py), [residual connections plus layer normalisation](utils/blocks_util.py) and [feedforward network](utils/blocks_util.py).
 - [tokenizers](https://huggingface.co/docs/tokenizers/index) package is used to perform tokenization
 # Dataset
-- Thanks to [hugging face](https://huggingface.co) , datasets package is used to load 'opus_books' dataset 
+- Thanks to [hugging face](https://huggingface.co) , datasets package is used to load 'opus_books' dataset
+
+# Evaluation
 
