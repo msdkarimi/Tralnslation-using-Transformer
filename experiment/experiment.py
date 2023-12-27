@@ -1,4 +1,4 @@
-from model.transformer_model import Transformer
+from model.transformer import Transformer
 import torch
 import torch.nn as nn
 from configs.args import args, logger
