@@ -9,6 +9,9 @@ class ModelUtil:
     def __init__(self,):
         pass
 
+    def __repr__(self):
+        return f'{self.model}'
+
     def save_checkpoint(self, checkpoint_path, loss, epoch):
         torch.save({
             'model': self.model.state_dict(),

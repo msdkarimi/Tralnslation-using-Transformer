@@ -27,6 +27,7 @@ def main(config):
                             head=config['MODEL']['HEADS'],
                             dropout=None,
                             N=config['MODEL']['STACK_ENC_DEC'])
+    # print(experiment)
 
     if os.path.exists(args.checkpoint_file):
         loss, init = experiment.load_checkpoint(args.checkpoint_file)
