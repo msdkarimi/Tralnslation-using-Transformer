@@ -10,7 +10,9 @@ class ModelUtil:
         pass
 
     def __repr__(self):
-        return f'{self.model}'
+        return f'*__model__* : {self.model}\n' \
+               f'*__criterion__* : {self.criterion}\n' \
+               f'*__optimizer__* : {self.optimizer}'
 
     def save_checkpoint(self, checkpoint_path, loss, epoch):
         torch.save({

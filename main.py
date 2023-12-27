@@ -21,13 +21,13 @@ def main(config):
                             embedding_size=config['MODEL']['EMB_DIM'],
                             ff_hidden_layer=config['MODEL']['FF_HIDDEN_LAYER'],
                             lr=config['MODEL']['LR'],
+                            weight_decay=float(config['MODEL']['WEIGHT_DECAY']),
                             l_s=config['MODEL']['LABEL_SMOOTHING'],
                             source_tokenizer=source_tokenizer,
                             target_tokenizer=target_tokenizer,
                             head=config['MODEL']['HEADS'],
                             dropout=None,
                             N=config['MODEL']['STACK_ENC_DEC'])
-    # print(experiment)
 
     if os.path.exists(args.checkpoint_file):
         loss, init = experiment.load_checkpoint(args.checkpoint_file)
