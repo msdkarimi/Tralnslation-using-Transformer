@@ -1,14 +1,8 @@
-from model.transformer import Transformer
-import torch
-import torch.nn as nn
-from configs.args import args, logger
-from utils.model_utils import ModelUtil
-import os
+from experiment import *
 
 
 class Experiment(ModelUtil):
     def __init__(self, encoder_input_vocab_size: int, decoder_input_vocab_size: int, embedding_size, max_seq_len: int, ff_hidden_layer, lr, weight_decay, l_s, source_tokenizer, target_tokenizer=None, head=6, dropout=None, N=6,):
-        super(Experiment, self).__init__()
 
         self.model = Transformer(encoder_input_vocab_size=encoder_input_vocab_size,
                                  decoder_input_vocab_size=decoder_input_vocab_size,
@@ -21,6 +15,12 @@ class Experiment(ModelUtil):
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay )
         self.criterion = torch.nn.CrossEntropyLoss(label_smoothing=l_s, ignore_index=source_tokenizer.token_to_id('[PAD]'))
+
+        self.bleu = BLEUScore()
+        self.wer = WordErrorRate()
+        self.cer = CharErrorRate()
+
+        # super(Experiment, self).__init__(self.model, self.optimizer, self.criterion)
 
         if args.cpu:
             self.device = 'cpu'

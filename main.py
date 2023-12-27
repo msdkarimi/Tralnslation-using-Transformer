@@ -30,12 +30,12 @@ def main(config):
                             dropout=None,
                             N=config['MODEL']['STACK_ENC_DEC'])
 
-    if os.path.exists(args.checkpoint_file):
-        loss, init = experiment.load_checkpoint(args.checkpoint_file)
+    # if os.path.exists(args.checkpoint_file):
+    loss, init = experiment.load_checkpoint(args.checkpoint_file)
 
-    else:
-        loss = 0
-        init = 0
+    # else:
+    #     loss = 0
+    #     init = 0
 
     a_batch = next(iter(train_data_loader))
     best_loss = 1e5
