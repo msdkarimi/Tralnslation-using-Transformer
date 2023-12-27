@@ -1,4 +1,4 @@
-from decoder import *
+from model import *
 
 class DecoderBlock(nn.Module):
     def __init__(self, embedding_size: int, ff_hidden_layer: int, head: int, dropout: float = None):

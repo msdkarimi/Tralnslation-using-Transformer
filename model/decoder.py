@@ -1,4 +1,4 @@
-from decoder import *
+from model import *
 
 
 class Decoder(nn.Module):

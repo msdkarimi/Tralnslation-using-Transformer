@@ -1,4 +1,4 @@
-from encoder import *
+from model import *
 
 
 class EncoderBlock(nn.Module):
