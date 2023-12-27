@@ -22,7 +22,7 @@ class Experiment:
 
 
 
-        # TODO just for initialization  not after loading
+        # # TODO just for initialization  not after loading
         for p in self.model.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
@@ -64,9 +64,9 @@ class Experiment:
             logger.info('-----------------Loading checkpoint!')
             checkpoint = torch.load(checkpoint_path)
 
-            for key, value in checkpoint['model'].items():
-                print(key)
-            exit(0)
+            # for key, value in checkpoint['model'].items():
+            #     print(key)
+            # exit(0)
             #
             self.model.load_state_dict(checkpoint['model'])
             self.optimizer.load_state_dict(checkpoint['optimizer'])

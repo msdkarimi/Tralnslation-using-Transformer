@@ -47,9 +47,9 @@ def main(config):
         total_loss += loss
         batch_iterator.set_postfix({"loss": f"{loss:6.3f}"})
 
-        if loss<best_loss:
-            best_loss = loss
-            experiment.save_checkpoint(args.checkpoint_file, loss, epoch)
+        # if loss<best_loss:
+        #     best_loss = loss
+        experiment.save_checkpoint(args.checkpoint_file, loss, epoch)
 
 
         # total_loss /= len(train_data_loader)

@@ -1,3 +1,4 @@
+import torch
 from datasets import load_dataset
 from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
@@ -10,6 +11,7 @@ from pathlib import Path
 
 
 def get_build_tokenizer(ds, lang):
+
     tokenizer_path = Path('tokenizer/for_lang_{}'.format(lang))
     if not Path.exists(tokenizer_path):
         tokenizer = Tokenizer(WordLevel(unk_token='[UNK]'))
@@ -29,7 +31,7 @@ def get_all_sentence_form_dataset(ds, lang):
 
 
 def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, workers):
-
+    torch.manual_seed(2809)
     ds_raw = load_dataset('opus_books', f'{lang_source}-{lang_target}', split='train')
     tokenizer_source = get_build_tokenizer(ds_raw, lang_source)
     tokenizer_target = get_build_tokenizer(ds_raw, lang_target)
@@ -39,6 +41,7 @@ def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, worker
 
     train_split_size = int(0.9 * len(ds_raw))
     val_split_size = len(ds_raw) - train_split_size
+
 
     train_ds, val_ds = random_split(ds_raw, [train_split_size, val_split_size])
 
