@@ -28,22 +28,25 @@ class MultiHeadSelfAttention(nn.Module):
 
     def stick_head_chunks(self, output):
         transposed_tensor = output.transpose(1, 2).contiguous()
-        return transposed_tensor.view(transposed_tensor.shape[0], transposed_tensor.shape[1], self.embedding_size)
+        # return transposed_tensor.view(transposed_tensor.shape[0], transposed_tensor.shape[1], self.embedding_size)
+        return transposed_tensor.view(transposed_tensor.shape[0], -1, self.embedding_size)
 
     def scaled_dot_product_attention(self, qs, ks, vs, mask=None):
         d_k = float(ks.shape[-1])
-        transposed_ks = ks.transpose(2, 3)
-        similarity_scores = torch.einsum('bhse,bhel->bhsl', qs, transposed_ks)
+        similarity_scores = torch.matmul(qs, ks.transpose(-2, -1))
         scaled_similarity_scores = similarity_scores / np.sqrt(d_k)
+
         if mask is not None:
-            scaled_similarity_scores.masked_fill(mask == 0, -1e10)
+            scaled_similarity_scores = scaled_similarity_scores.masked_fill(mask == 0, -np.inf)
 
         squeezed_scores = self.softmax(scaled_similarity_scores)
 
         if self.dropout is not None:
             squeezed_scores = self.dropout(squeezed_scores)
 
-        context_aware_scores = torch.einsum('bhke,bhel->bhkl', squeezed_scores, vs)
+        # context_aware_scores = torch.einsum('bhke,bhel->bhkl', squeezed_scores, vs)
+        # context_aware_scores = squeezed_scores @ vs
+        context_aware_scores = torch.matmul(squeezed_scores, vs)
 
         return context_aware_scores, squeezed_scores
 
@@ -56,7 +59,6 @@ class MultiHeadSelfAttention(nn.Module):
         :param mask:
         :return:
         """
-
         Q = self.wq(q)  # (None, seq_len, emb_len)*(None, emb_len, emb_len) ---(weight of wq to be trained)--->(None, seq_len, emb_len)
         K = self.wk(k)  # (None, seq_len, emb_len)*(None, emb_len, emb_len) ---(weight of wk to be trained)--->(None, seq_len, emb_len)
         V = self.wv(v)  # (None, seq_len, emb_len)*(None, emb_len, emb_len) ---(weight of wv to be trained)--->(None, seq_len, emb_len)
@@ -67,7 +69,7 @@ class MultiHeadSelfAttention(nn.Module):
 
         context_aware_scores, weights = self.scaled_dot_product_attention(qs, ks, vs, mask=mask)
         output = self.stick_head_chunks(context_aware_scores)  # output.shape -> (None, seq_len, emb_len)
-        return self.output(output)
+        return self.output(output), context_aware_scores
 
 
 class FeedForward(nn.Module):

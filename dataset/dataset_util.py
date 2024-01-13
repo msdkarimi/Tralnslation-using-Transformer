@@ -5,8 +5,8 @@ from tokenizers.models import WordLevel
 # helps to create vocab based on list of sentences
 from tokenizers.trainers import WordLevelTrainer
 from tokenizers.pre_tokenizers import Whitespace
-from torch.utils.data import random_split, DataLoader, Dataset
-from dataset.bilingual_dataset import BilingualDataset, mask
+from torch.utils.data import random_split, DataLoader
+from dataset.bilingual_dataset import BilingualDataset
 from pathlib import Path
 
 
@@ -31,17 +31,33 @@ def get_all_sentence_form_dataset(ds, lang):
 
 
 def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, workers):
-    torch.manual_seed(1371)
+    # torch.manual_seed(1371)
+    # torch.manual_seed(145678371)
+    # torch.manual_seed(13711212)  # 1.7528884410858154 20  1.7019003629684448 26 1.5525379180908203 32   1.6161561012268066
+ # 36
+    # torch.manual_seed(13511271)  # 6.2185869216918945  5.844141006469727 5.844141006469727 1.7522130012512207
+
     ds_raw = load_dataset('opus_books', f'{lang_source}-{lang_target}', split='train')
     tokenizer_source = get_build_tokenizer(ds_raw, lang_source)
     tokenizer_target = get_build_tokenizer(ds_raw, lang_target)
+
+    # max_len_src = 0
+    # max_len_tgt = 0
+    #
+    # for item in ds_raw:
+    #     src_ids = tokenizer_source.encode(item['translation']['en']).ids
+    #     tgt_ids = tokenizer_target.encode(item['translation']['it']).ids
+    #     max_len_src = max(max_len_src, len(src_ids))
+    #     max_len_tgt = max(max_len_tgt, len(tgt_ids))
+
+    # print(f'Max length of source sentence: {max_len_src}')
+    # print(f'Max length of target sentence: {max_len_tgt}')
 
     source_vocab_size = tokenizer_source.get_vocab_size()
     target_vocab_size = tokenizer_target.get_vocab_size()
 
     train_split_size = int(0.9 * len(ds_raw))
     val_split_size = len(ds_raw) - train_split_size
-
 
     train_ds, val_ds = random_split(ds_raw, [train_split_size, val_split_size])
 

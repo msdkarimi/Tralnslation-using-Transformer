@@ -6,9 +6,9 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
 
         self.N = N
-        self.pe = PositionalEmbedding(dictionary_size=encoder_input_vocab_size,
-                                      embedding_size=embedding_size,
-                                      max_len=max_seq_len)
+        # self.pe = PositionalEmbedding(dictionary_size=encoder_input_vocab_size,
+        #                               embedding_size=embedding_size,
+        #                               max_len=max_seq_len)
 
         self.encoder_blocks = nn.ModuleList([
             EncoderBlock(embedding_size=embedding_size,
@@ -19,7 +19,14 @@ class Encoder(nn.Module):
             ])
 
     def forward(self, x, mask):
-        x = self.pe(x)
+        # x = self.pe(x)
+
+        # print('mask encoder')
+        # print(mask.shape)
+        # print('encoder_input')
+        # print(x.shape)
+        # exit()
+
         for an_encoder in self.encoder_blocks:
             x = an_encoder(x, mask)
         return x
@@ -36,7 +43,8 @@ class EncoderBlock(nn.Module):
         self.mask = mask
 
     def forward(self, x, mask):
-        output_mhsa = self.mhsa(x, x, x, mask)
+        output_mhsa, _ = self.mhsa(x, x, x, mask)
+
         output_mhsa_plus_residual = self.add_and_norm_mhsa(x, output_mhsa)
         output_ffn = self.ffn(output_mhsa_plus_residual)
         output_ffn_plus_residual = self.add_and_norm_ffn(output_ffn, output_mhsa_plus_residual)

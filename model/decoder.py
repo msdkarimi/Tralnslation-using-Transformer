@@ -6,9 +6,9 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         self.N = N
-        self.pe = PositionalEmbedding(dictionary_size=decoder_input_vocab_size,
-                                      embedding_size=embedding_size,
-                                      max_len=max_seq_len)
+        # self.pe = PositionalEmbedding(dictionary_size=decoder_input_vocab_size,
+        #                               embedding_size=embedding_size,
+        #                               max_len=max_seq_len)
 
         self.decoder_blocks = nn.ModuleList([
             DecoderBlock(embedding_size=embedding_size,
@@ -18,12 +18,19 @@ class Decoder(nn.Module):
             for _ in range(self.N)
             ])
 
-    def forward(self, decoder_input, encoder_output, mask):
-        decoder_input = self.pe(decoder_input)
-        for a_decoder in self.decoder_blocks:
-            decoder_output = a_decoder(decoder_input, encoder_output, mask)
+    def forward(self, decoder_input, encoder_output, mask_tgt, mask_src):
+        # decoder_input = self.pe(decoder_input)
+
+        # print('mask decoder')
+        # print(mask.shape)
+        # print('decoder_input')
+        # print(decoder_input.shape)
+        # exit()
+        for a_decoder_block in self.decoder_blocks:
+            decoder_output = a_decoder_block(decoder_input, encoder_output, mask_tgt, mask_src)
             decoder_input = decoder_output
         return decoder_output
+
 
 class DecoderBlock(nn.Module):
     def __init__(self, embedding_size: int, ff_hidden_layer: int, head: int, dropout: float = None):
@@ -38,11 +45,11 @@ class DecoderBlock(nn.Module):
         self.add_and_norm_mhca = AddAndNorm(embedding_size=embedding_size)
         self.add_and_norm_ffn = AddAndNorm(embedding_size=embedding_size)
 
-    def forward(self, x, encoder_output, mask):
-        output_masked_mhsa = self.masked_mhsa(x, x, x, mask)
+    def forward(self, x, encoder_output, mask_tgt, mask_src):
+        output_masked_mhsa, _ = self.masked_mhsa(x, x, x, mask_tgt)
         output_masked_mhsa_plus_residual = self.add_and_norm_masked_mhsa(x, output_masked_mhsa)
 
-        cross_attention_output = self.mhca(output_masked_mhsa_plus_residual, encoder_output, encoder_output)
+        cross_attention_output, _ = self.mhca(output_masked_mhsa_plus_residual, encoder_output, encoder_output, mask_src)
         output_mhca_plus_residual = self.add_and_norm_mhca(cross_attention_output, output_masked_mhsa_plus_residual)
 
         output_ffn = self.ffn(output_mhca_plus_residual)

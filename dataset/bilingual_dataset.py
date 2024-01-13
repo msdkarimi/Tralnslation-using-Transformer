@@ -51,22 +51,22 @@ class BilingualDataset(Dataset):
                            torch.tensor([self.pad_token] * number_of_padding_tokens_target, dtype=torch.int64)
                            ], dim=0)
 
-        assert encoder_input.size(0) == self.seq_len, 'batch dimension needs to be added'
-        assert decoder_input.size(0) == self.seq_len, 'batch dimension needs to be added'
-        assert label.size(0) == self.seq_len, 'batch dimension needs to be added'
+        assert encoder_input.size(0) == self.seq_len, 'check for length of token sequence, aligned with seq_len'
+        assert decoder_input.size(0) == self.seq_len, 'check for length of token sequence, aligned with seq_len'
+        assert label.size(0) == self.seq_len, 'check for length of token sequence, aligned with seq_len'
 
         return {
             "encoder_input": encoder_input,
             "decoder_input": decoder_input,
             "label": label,
             "encoder_mask": (encoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int(),
-            "decoder_mask": (decoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int() & mask(
+            "decoder_mask": (decoder_input != self.pad_token).unsqueeze(0).int() & self.mask(
                 decoder_input.shape[0]),
             "src_txt": src_text,
             "tgt_txt": tgt_text,
         }
 
-
-def mask(size):
-    up_triangular = torch.triu(torch.ones(1, size, size), diagonal=1).type(torch.int)
-    return up_triangular == 0
+    @staticmethod
+    def mask(size):
+        up_triangular = torch.triu(torch.ones(1, size, size), diagonal=1).type(torch.int)
+        return up_triangular == 0

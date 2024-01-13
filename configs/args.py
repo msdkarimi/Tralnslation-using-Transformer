@@ -35,9 +35,10 @@ if not Path('dictionaries').exists():
     # If it doesn't exist, create the directory
     Path('dictionaries').mkdir()
 #
-if not args.cpu:
-    assert torch.cuda.is_available(), 'You need a CUDA capable device in order to run this experiment. See `--cpu` flag.'
+# if not args.cpu:
+#     assert torch.cuda.is_available(), 'You need a CUDA capable device in order to run this experiment. See `--cpu` flag.'
 
+args.cpu = True
 
 logging.basicConfig(filename=f'{args.output}/logs/logs.txt',filemode="a", level=logging.INFO, format='> %(name)s | %(asctime)s | %(message)s')
 logger = logging.getLogger(args.phase)

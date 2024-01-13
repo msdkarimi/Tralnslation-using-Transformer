@@ -6,3 +6,4 @@ yml
 tqdm
 datasets
 tokenizers
+tabulate
