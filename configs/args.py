@@ -10,7 +10,7 @@ if not os.path.exists(os.path.join(os.getcwd(), "outputDir")):
     os.mkdir(os.path.join(os.path.join(os.getcwd(), "outputDir"), "weights"))
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--phase", help="whether train/eval/test", choices=["train", "validation", "test", "plot"])
+parser.add_argument("phase", help="whether train/eval/test", choices=["train", "validation", "test", "plot"])
 parser.add_argument('--config', help="location of config file", default=os.path.join(os.getcwd(), 'configs', 'config.yaml'))
 parser.add_argument('--stepSize', type=int, default=20, help='scheduler step size to reduce learning rate')
 parser.add_argument('--cpu', action='store_true', help='If set, the experiment will run on the CPU.')

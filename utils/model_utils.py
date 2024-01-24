@@ -1,6 +1,7 @@
 import torch
 import os
-from configs.args import logger
+from configs.args import logger, args
+import matplotlib.pyplot as plt
 import torch.nn as nn
 
 
@@ -8,7 +9,6 @@ class ModelUtil:
 
     def __init__(self, ):
         pass
-
 
     def __repr__(self):
         return f'*__model__* : {self.model}\n' \
@@ -32,7 +32,8 @@ class ModelUtil:
             self.model.load_state_dict(checkpoint['model'])
             self.optimizer.load_state_dict(checkpoint['optimizer'])
             self.scheduler.load_state_dict(checkpoint['scheduler'])
-            logger.info(f'-----------------Loading checkpoint with loss {checkpoint["loss"]}, epoch {checkpoint["epoch"]}')
+            logger.info(
+                f'-----------------Loading checkpoint with loss {checkpoint["loss"]}, epoch {checkpoint["epoch"]}')
 
             return checkpoint['loss'], checkpoint['epoch'] + 1
 
@@ -40,11 +41,47 @@ class ModelUtil:
             logger.info('{')
             return 0, 0
 
-            # raise FileExistsError(f'file {checkpoint_path} does not exists!')
-
     def get_lr(self):
         return self.optimizer.param_groups[0]['lr']
 
     def get_model_config(self):
         pass
-        # parameters, layers, optimizer, schediler, task
+        # parameters, layers, optimizer, scheduler, task
+
+    @staticmethod
+    def plot_lr():
+        path_to_logs = os.path.join(args.output, 'logs/logs.txt')
+
+
+
+        train_loss = list()
+        validation_loss = list()
+        validation_logs = list()
+        with open(path_to_logs, 'r') as log_file:
+            the_file = log_file.readlines()
+
+        for line in the_file:
+            splited = line.strip().split(' ')
+
+            if splited[1] == 'validation':
+                validation_logs.append(line.strip().split(' '))
+
+        for sub_line in validation_logs:
+            if 'validation_loss' in sub_line:
+                validation_loss.append(float(sub_line[-1]))
+            else:
+                train_loss.append(float(sub_line[-3].split(',')[0]))
+
+        x = range(51)
+        plt.plot(x, train_loss)
+        plt.plot(x, validation_loss)
+        plt.xlabel('epochs')
+        plt.ylabel('loss')
+        plt.legend(['train', 'validation'])
+        plt.show()
+
+
+
+    @staticmethod
+    def plot_attention():
+        pass

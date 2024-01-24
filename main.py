@@ -54,45 +54,71 @@ def main(config):
                             target_tokenizer=target_tokenizer,
                             head=config['MODEL']['HEADS'],
                             N=config['MODEL']['STACK_ENC_DEC'])
+    if args.phase == 'train':
+        loss, init = experiment.load_checkpoint(args.checkpoint_file)
+        best_loss = 1e5 if loss == 0 else loss
+        print(f'init with loss: {best_loss}')
+        print(f'started with lr: {experiment.get_lr()}')
 
-    loss, init = experiment.load_checkpoint(args.checkpoint_file)
+        for epoch in range(init, config['MODEL']['EPOCHS']):
+            total_loss = 0
+            batch_iterator = tqdm(train_data_loader, desc=f"epoch {epoch:03d}/{config['MODEL']['EPOCHS']:03d}")
+            for a_batch in batch_iterator:
+                loss = experiment.train(a_batch)
+                total_loss += loss
+                batch_iterator.set_postfix({"loss": f"{loss:6.3f}"})
+
+            total_loss /= len(train_data_loader)
+
+            if total_loss < best_loss:
+                best_loss = total_loss
+                experiment.save_checkpoint(args.checkpoint_file, best_loss, epoch, type='best')
+
+            file_name = f'checkpoint_epoch_{epoch}.pth'
+            experiment.save_checkpoint(os.path.join(os.getcwd(), 'outputDir', 'weights', file_name), total_loss, epoch)
+
+            experiment.scheduler.step() # from 14 stopped then statred from 29 stoped at 34 started at 43
+            print(total_loss)
+            print(f'next iteration lr will be : {experiment.get_lr()}')
+        logger.info('}')
+
+    elif args.phase == 'validation':
+        for chech_point_idx in range(51, config['MODEL']['EPOCHS']):
+            args.checkpoint_file = os.path.join(os.getcwd(), 'outputDir', 'weights', f'checkpoint_epoch_{chech_point_idx}.pth')
+            _, _ = experiment.load_checkpoint(args.checkpoint_file)
+            batch_iterator = tqdm(validation_data_loader)
+            val_loss = 0
+            for a_batch in batch_iterator:
+                # out = experiment.autoregressive_validation(a_batch)
+                loss, _ = experiment.validation(a_batch)
+                val_loss +=loss
+                batch_iterator.set_postfix({"loss": f"{loss:6.3f}"})
+            logger.info(f'checkpoint_epoch_{chech_point_idx}.pth, validation_loss {val_loss/len(validation_data_loader)} ')
+    elif args.phase == 'plot':
+        # experiment.plot_lr()
+        print(experiment.model)
+
+
+
 
     # a_batch = next(iter(train_data_loader))
-    best_loss = 1e5 if loss == 0 else loss
-    print(f'init with loss: {best_loss}')
-    print(f'started with lr: {experiment.get_lr()}')
+    # loss, predictions = experiment.validation(a_batch)
+    # print(f'loss: {loss}')
+    # print(f'translation: {predictions}')
+    # print("----------------------------------------------------------------")
+    # # experiment.save_checkpoint(args.checkpoint_file, best_loss, epoch, type='best')
+    # out = experiment.autoregressive_validation(a_batch)
+    # print(out)
+    # print("------------------------")
+    # exit()
 
-    for epoch in range(init, config['MODEL']['EPOCHS']):
-        total_loss = 0
-        # batch_iterator = tqdm(a_batch, desc=f"Processing Epoch {epoch:02d}")
-        batch_iterator = tqdm(train_data_loader, desc=f"epoch {epoch:03d}/{config['MODEL']['EPOCHS']:03d}")
-        for a_batch in batch_iterator:
-            loss = experiment.train(a_batch)
-            total_loss += loss
-            batch_iterator.set_postfix({"loss": f"{loss:6.3f}"})
-
-        total_loss /= len(train_data_loader)
-
-        if total_loss < best_loss:
-            best_loss = total_loss
-            experiment.save_checkpoint(args.checkpoint_file, best_loss, epoch, type='best')
-
-        file_name = f'checkpoint_epoch_{epoch}.pth'
-        experiment.save_checkpoint(os.path.join(os.getcwd(), 'outputDir', 'weights', file_name), total_loss, epoch)
-
-        experiment.scheduler.step() 
-        print(total_loss)
-        print(f'next iteration lr will be : {experiment.get_lr()}')
-    logger.info('}')
-
-
-
-
-    batch_iterator = tqdm(validation_data_loader)
-    for a_batch in batch_iterator:
-        out = experiment.autoregressive_validation(a_batch)
-        print(out)
-        print("------------------------")
+    # batch_iterator = tqdm(validation_data_loader)
+    # for a_batch in batch_iterator:
+    #     # out = experiment.autoregressive_validation(a_batch)
+    #     loss, _ = experiment.validation(a_batch)
+    #     print(loss)
+    #     # get losss of all validation dataset to print tin the log file
+    #     print("------------------------")
 
 
 if __name__ == '__main__':

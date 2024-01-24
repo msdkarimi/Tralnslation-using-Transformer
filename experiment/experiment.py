@@ -42,6 +42,7 @@ class Experiment(ModelUtil):
 
     def train(self, a_batch):
         self.model.train()
+
         net = self.model.to(self.device)
 
         encoder_input_tensor = a_batch['encoder_input'].to(self.device)

@@ -4,12 +4,7 @@ from model import *
 class Decoder(nn.Module):
     def __init__(self, decoder_input_vocab_size: int, embedding_size: int, max_seq_len: int, ff_hidden_layer: int, head: int, dropout: float = None, N=6):
         super(Decoder, self).__init__()
-
         self.N = N
-        # self.pe = PositionalEmbedding(dictionary_size=decoder_input_vocab_size,
-        #                               embedding_size=embedding_size,
-        #                               max_len=max_seq_len)
-
         self.decoder_blocks = nn.ModuleList([
             DecoderBlock(embedding_size=embedding_size,
                          ff_hidden_layer=ff_hidden_layer,
@@ -19,13 +14,6 @@ class Decoder(nn.Module):
             ])
 
     def forward(self, decoder_input, encoder_output, mask_tgt, mask_src):
-        # decoder_input = self.pe(decoder_input)
-
-        # print('mask decoder')
-        # print(mask.shape)
-        # print('decoder_input')
-        # print(decoder_input.shape)
-        # exit()
         for a_decoder_block in self.decoder_blocks:
             decoder_output = a_decoder_block(decoder_input, encoder_output, mask_tgt, mask_src)
             decoder_input = decoder_output

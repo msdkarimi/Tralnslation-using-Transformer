@@ -17,16 +17,6 @@ class Transformer(nn.Module):
 
     def forward(self, encoder_input, decoder_input, mask_encoder, mask_decoder):
 
-        # encoder_output = self.encoder(encoder_input, mask_encoder)
-        # decoder_output = self.decoder(decoder_input, encoder_output, mask_decoder)
-        # logits = self.linear(decoder_output)  # torch.Size([16, 512, 22463]) (B, max_seq_len, vocab_size)
-
-        # print('mask_encoder')
-        # print(mask_encoder.shape)
-        # print('mask_decoder')
-        # print(mask_decoder.shape)
-        # exit()
-
         encoder_output = self.encoding(encoder_input, mask_encoder)
         decoder_output = self.decoding(decoder_input, encoder_output, mask_decoder, mask_encoder)
         logits = self.projection(decoder_output)

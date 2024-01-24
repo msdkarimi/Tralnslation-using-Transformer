@@ -33,9 +33,9 @@ def get_all_sentence_form_dataset(ds, lang):
 def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, workers):
     # torch.manual_seed(1371)
     # torch.manual_seed(145678371)
-    # torch.manual_seed(13711212)  # 1.7528884410858154 20  1.7019003629684448 26 1.5525379180908203 32   1.6161561012268066
+    # torch.manual_seed(13711212)  # 1.7528884410858154 20  1.7019003629684448 26 1.5525379180908203 32 1.6161561012268066  36
  # 36
-    # torch.manual_seed(13511271)  # 6.2185869216918945  5.844141006469727 5.844141006469727 1.7522130012512207
+ #    torch.manual_seed(13511271)  # 6.2185869216918945  5.844141006469727 5.864141006469727 1.7522130012512207
 
     ds_raw = load_dataset('opus_books', f'{lang_source}-{lang_target}', split='train')
     tokenizer_source = get_build_tokenizer(ds_raw, lang_source)
@@ -65,6 +65,21 @@ def get_train_val_datasets(lang_source, lang_target, batch_size, max_len, worker
     val_dataset = BilingualDataset(val_ds, tokenizer_source, tokenizer_target, 'en', 'it', seq_len=max_len)
 
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=workers)
-    val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=workers)
+    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=workers)
 
     return train_dataloader, val_dataloader, source_vocab_size, target_vocab_size, tokenizer_source, tokenizer_target
+
+def interactive_data(encoder_input_text: str , lang_source, lang_target, max_len):
+
+    data = {'translation':
+                {'en': encoder_input_text,
+                 'it': 'nulla'
+                 }
+            }
+
+    tokenizer_source = Tokenizer.from_file(str(Path('dictionaries/for_lang_{}'.format(lang_source))))
+    tokenizer_target = Tokenizer.from_file(str(Path('dictionaries/for_lang_{}'.format(lang_target))))
+
+    interactive_dataset = BilingualDataset(data, tokenizer_source, tokenizer_target, lang_source, lang_target, seq_len=max_len)
+    train_dataloader = DataLoader(interactive_dataset, batch_size=1, shuffle=False, num_workers=1)
+    return train_dataloader
